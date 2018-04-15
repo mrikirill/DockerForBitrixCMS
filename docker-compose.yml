@@ -34,8 +34,7 @@ services:
   mysql:
     build:
       ./mysql
-    depends_on:
-      - php
+
     restart: always
     ports:
       - ${MYSQL_LOCAL_PORT}:3306
