@@ -1,25 +1,25 @@
 version: '3'
 
 services:
-  apache:
-    image: httpd:2.4
-    restart: always
-    volumes:
-      - ./src:/var/www/html
-      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - ./logs/httpd:/var/log/httpd
-
-  nginx:
-    image: nginx:1.13
-    restart: always
-    links:
-      - php
-    ports:
-      - '${LOCALHOST_PORT}:80'
-    volumes:
-      - ./src:/var/www/html
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./logs/nginx:/var/log/nginx
+#  apache:
+#    image: httpd:2.4
+#    restart: always
+#    volumes:
+#      - ./src:/var/www/html
+#      - ./httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
+#      - ./logs/httpd:/var/log/httpd
+#
+#  nginx:
+#    image: nginx:1.13
+#    restart: always
+#    links:
+#      - php
+#    ports:
+#      - '${LOCALHOST_PORT}:80'
+#    volumes:
+#      - ./src:/var/www/html
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+#      - ./logs/nginx:/var/log/nginx
 
   php:
     restart: always
@@ -31,29 +31,29 @@ services:
       - ./src:/var/www/html
       - ./logs/php:/var/log/php
 
-  mysql:
-    build:
-      ./mysql
-    depends_on:
-      - php
-    restart: always
-    ports:
-      - ${MYSQL_LOCAL_PORT}:3306
-    volumes:
-      - ./logs/mysql:/var/log/mysql
-      - ./data:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-
-  pma:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    links:
-      - mysql
-    ports:
-      - '${PHPMYADMIN_PORT}:80'
-    depends_on:
-      - mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - PMA_HOST=mysql
+#  mysql:
+#    build:
+#      ./mysql
+#    depends_on:
+#      - php
+#    restart: always
+#    ports:
+#      - ${MYSQL_LOCAL_PORT}:3306
+#    volumes:
+#      - ./logs/mysql:/var/log/mysql
+#      - ./data:/var/lib/mysql
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+#
+#  pma:
+#    image: phpmyadmin/phpmyadmin
+#    restart: always
+#    links:
+#      - mysql
+#    ports:
+#      - '${PHPMYADMIN_PORT}:80'
+#    depends_on:
+#      - mysql
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+#      - PMA_HOST=mysql

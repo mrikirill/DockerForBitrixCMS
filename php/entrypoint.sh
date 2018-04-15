@@ -4,8 +4,7 @@ INIT="${INIT_PROJECT}"
 TEMP_DIR="/app"
 APPLICATION_DIR="/var/www/html"
 BACKUP_URL="${BACKUP_URL}"
-REPO_URL="REPO_URL";
-REPO_PASSWORD="${REPO_PASSWORD}";
+REPO_URL="${REPO_URL}";
 BITRIX_SETUP="https://www.dropbox.com/s/94y1sjjtdnwb0to/restore.php?dl=0"
 
 
@@ -24,7 +23,7 @@ if [ ! -d "${APPLICATION_DIR}/bitrix" ]; then
   EXISTS=true
   COUNTER=0
 
-  # Download
+# Download
   while [ ${EXISTS} = true ]
        do
            URL=${BACKUP_URL}
@@ -50,31 +49,32 @@ if [ ! -d "${APPLICATION_DIR}/bitrix" ]; then
          cp -r ${TEMP_DIR}/* ${APPLICATION_DIR}/
          wget ${BITRIX_SETUP} -O ${APPLICATION_DIR}/restore.php
         else
-          cat ${TEMP_DIR}/${ARCHIVE}* > ${TEMP_DIR}/archive.tar.gz
-          rm -rf ${TEMP_DIR}/${ARCHIVE}*
-          # Extract
-          tar -xzf ${TEMP_DIR}/archive.tar.gz -C ${TEMP_DIR}
+              cat ${TEMP_DIR}/${ARCHIVE}* > ${TEMP_DIR}/archive.tar.gz
+              rm -rf ${TEMP_DIR}/${ARCHIVE}*
+              # Extract
+              tar -xzf ${TEMP_DIR}/archive.tar.gz -C ${TEMP_DIR}
 
-          # Delete archive
-          rm ${TEMP_DIR}/archive.tar.gz
+              # Delete archive
+              rm ${TEMP_DIR}/archive.tar.gz
 
-          # Copy database file to root folder
-         if [ -f "${TEMP_DIR}/bitrix/backup/${ARCHIVE_NAME}.sql" ]; then
-             mv ${TEMP_DIR}/bitrix/backup/${ARCHIVE_NAME}.sql ${TEMP_DIR}/bitrix.sql
-         fi
+              # Copy database file to root folder
+             if [ -f "${TEMP_DIR}/bitrix/backup/${ARCHIVE_NAME}.sql" ]; then
+                 mv ${TEMP_DIR}/bitrix/backup/${ARCHIVE_NAME}.sql ${TEMP_DIR}/bitrix.sql
+             fi
 
-         if [ -f "${TEMP_DIR}/bitrix/backup/${ARCHIVE_NAME}_after_connect.sql" ]; then
-             mv ${TEMP_DIR}/bitrix/backup/${ARCHIVE_NAME}_after_connect.sql ${TEMP_DIR}/bitrix_after_connect.sql
-         fi
+             if [ -f "${TEMP_DIR}/bitrix/backup/${ARCHIVE_NAME}_after_connect.sql" ]; then
+                 mv ${TEMP_DIR}/bitrix/backup/${ARCHIVE_NAME}_after_connect.sql ${TEMP_DIR}/bitrix_after_connect.sql
+             fi
 
-        (echo ${REPO_PASSWORD}) | git clone ${REPO_URL} ${APPLICATION_DIR}
-        cp -r "${TEMP_DIR}/bitrix" ${APPLICATION_DIR}
-        cp ${TEMP_DIR}/bitrix.sql ${APPLICATION_DIR}/bitrix.sql
-        cp ${TEMP_DIR}/bitrix_after_connect.sql ${APPLICATION_DIR}/bitrix_after_connect.sql
+            rm -rf ${APPLICATION_DIR}/
+            git clone ${REPO_URL} ${APPLICATION_DIR}
+            cp -r "${TEMP_DIR}/bitrix" ${APPLICATION_DIR}
+            cp ${TEMP_DIR}/bitrix.sql ${APPLICATION_DIR}/bitrix.sql
+            cp ${TEMP_DIR}/bitrix_after_connect.sql ${APPLICATION_DIR}/bitrix_after_connect.sql
 
         fi
 
-       rm -rf ${TEMP_DIR}/*
+        rm -rf ${TEMP_DIR}/
 fi
 
 # Run PHP-FPM
