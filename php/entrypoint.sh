@@ -74,7 +74,6 @@ if [ ! -d "${APPLICATION_DIR}/bitrix" ]; then
 
         fi
 
-        rm -rf ${TEMP_DIR}/
 fi
 
 # Run PHP-FPM
