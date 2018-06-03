@@ -7,11 +7,20 @@ BACKUP_URL="${BACKUP_URL}"
 REPO_URL="${REPO_URL}";
 BITRIX_SETUP="https://www.dropbox.com/s/94y1sjjtdnwb0to/restore.php?dl=0"
 
-
+#check http status of remote file
 function destinationExists(){
    if [[ `wget -S --spider $1  2>&1 | grep 'HTTP/1.1 200 OK'` ]];
     then echo "true";
     else echo "false";
+  fi
+}
+
+#get file size of remote file in MB
+function getFileSize() {
+  FILE_SIZE=`wget -S --spider $1 2>&1 | awk '/Content-Length/ { print $2 }'`;
+  if [[ ${FILE_SIZE} > 0 ]];
+    then echo $((${FILE_SIZE} / 1024 / 1024));
+    else echo "0";
   fi
 }
 
@@ -23,7 +32,7 @@ if [ ! -d "${APPLICATION_DIR}/bitrix" ]; then
   EXISTS=true
   COUNTER=0
 
-# Download
+# Download backup(s)
   while [ ${EXISTS} = true ]
        do
            URL=${BACKUP_URL}
@@ -32,8 +41,14 @@ if [ ! -d "${APPLICATION_DIR}/bitrix" ]; then
            fi
 
            EXISTS=$(destinationExists "${URL}")
-           if [ ${EXISTS} = true ]; then
-               wget ${URL} -P ${TEMP_DIR}
+           FILE_SIZE=$(getFileSize "${URL}");
+
+           if (( ${FILE_SIZE} < 10 ));
+             then EXISTS=false;
+           fi
+
+           if [ ${EXISTS} = true ]; 
+             then wget ${URL} -P ${TEMP_DIR}
            fi
 
            let COUNTER=COUNTER+1
@@ -73,7 +88,6 @@ if [ ! -d "${APPLICATION_DIR}/bitrix" ]; then
             cp ${TEMP_DIR}/bitrix_after_connect.sql ${APPLICATION_DIR}/bitrix_after_connect.sql
 
         fi
-
 fi
 
 # Run PHP-FPM
